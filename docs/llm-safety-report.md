@@ -25,3 +25,28 @@ predictable by a simpler checking program.
 Undecidability gives a principled reason, grounded in computability theory rather
 than just current technical limitations, for why AI safety is approached as
 defense-in-depth rather than a single solved checking problem.
+
+## Further grounding: Rice's Theorem
+
+The Halting Problem is a special case of a more general result, **Rice's Theorem
+(1953)**: no algorithm can decide any non-trivial semantic property of an arbitrary
+program, not just whether it halts.
+
+Properties like "is this model's output always truthful" or "will this system stay
+aligned" are exactly this kind of property, so there can be no single, universal
+algorithm that verifies them for every possible AI system in every situation. What
+remains possible is narrower, bounded verification — testing a specific system under
+specific assumptions — which is the practical approach most real safety engineering
+already takes.
+
+**Worth noting:** this extension of Rice's Theorem to AI traits is not universally
+accepted as settled — some researchers argue the theorem's conditions don't cleanly
+apply once resource bounds are taken into account. So undecidability gives a strong
+theoretical reason to expect no perfect universal checker, but exactly how far that
+limit extends to AI specifically is still debated.
+
+### Sources
+- Pentera, *Rice's Theorem and AI Safety* — https://pentera.io/?p=5122
+- Futura Sciences, *Why Turing's discovery still blocks superintelligent AI* — https://www.futura-sciences.com/en/why-turings-forgotten-discovery-still-blocks-truly-superintelligent-ai-today_38245/
+- arXiv, *From Trakhtenbrot's Wall to the Safety-Generality trade-off* — https://arxiv.org/pdf/2606.28639
+- Review of *On Formally Undecidable Traits of Intelligent Machines* (counter-argument) — https://www.themoonlight.io/en/review/on-formally-undecidable-traits-of-intelligent-machines
