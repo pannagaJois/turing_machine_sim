@@ -37,3 +37,21 @@ class Tape:
         top = " ".join(self.cells.get(i, BLANK) for i in range(lo, hi + 1))
         marker = "   ".join("^" if i == self.head else " " for i in range(lo, hi + 1))
         return f"{top}\n{marker}"
+
+    def render_color(self):
+        YELLOW = "\033[93m"
+        RESET = "\033[0m"
+        if not self.cells:
+            lo, hi = 0, 0
+        else:
+            lo, hi = min(self.cells), max(self.cells)
+        lo = min(lo, self.head)
+        hi = max(hi, self.head)
+        cells = []
+        for i in range(lo, hi + 1):
+            symbol = self.cells.get(i, BLANK)
+            if i == self.head:
+                cells.append(f"{YELLOW}[{symbol}]{RESET}")
+            else:
+                cells.append(f" {symbol} ")
+        return "".join(cells)
