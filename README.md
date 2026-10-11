@@ -8,7 +8,9 @@ Halting Problem linked to LLM safety.
 
 ```
 cd src
-python3 main.py
+python3 main.py                              # full fixed demo
+python3 main.py addition 111+11               # run a specific input
+python3 main.py palindrome abcba --animate     # colored step-by-step animation
 ```
 
 ## Team
