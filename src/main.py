@@ -1,4 +1,6 @@
 import sys
+import argparse
+
 sys.path.insert(0, "../tables")
 sys.path.insert(0, "tables")
 
@@ -8,33 +10,59 @@ from palindrome_table import build_palindrome_tm
 from halting_demo import show_contradiction
 
 
-def run_addition(input_string, verbose=False):
-    transitions, start, accept, reject = build_addition_tm()
-    tm = TuringMachine(transitions, start, accept, reject)
-    return tm.run(input_string, verbose=verbose)
+def build_machine(kind, alphabet):
+    if kind == "addition":
+        return build_addition_tm()
+    if kind == "palindrome":
+        return build_palindrome_tm(alphabet)
+    raise ValueError(f"unknown machine: {kind}")
 
 
-def run_palindrome(input_string, alphabet=None, verbose=False):
-    if alphabet is None:
-        alphabet = sorted(set(input_string))
-    transitions, start, accept, reject = build_palindrome_tm(alphabet)
+def run_machine(kind, input_string, alphabet, animate, delay):
+    transitions, start, accept, reject = build_machine(kind, alphabet)
     tm = TuringMachine(transitions, start, accept, reject)
-    return tm.run(input_string, verbose=verbose)
+    result, tape, steps = tm.run(input_string, animate=animate, delay=delay)
+    if not animate:
+        print(f"{kind} on '{input_string}' -> {result} (tape: '{tape}', {steps} steps)")
 
 
 def demo():
     print("TM 1 (Addition): 111+11")
-    result, tape, steps = run_addition("111+11", verbose=True)
-    print(f"Result: {tape} ({result}, {steps} steps)\n")
+    run_machine("addition", "111+11", None, animate=False, delay=0.4)
 
     for word in ["abcba", "abcda"]:
         print(f"TM 2 (Palindrome): {word}")
-        result, tape, steps = run_palindrome(word)
-        print(f"-> {result}\n")
+        run_machine("palindrome", word, list(word), animate=False, delay=0.4)
 
     print("--- Halting Problem ---")
     show_contradiction()
 
 
+def main():
+    parser = argparse.ArgumentParser(description="Turing Machine Simulator CLI")
+    sub = parser.add_subparsers(dest="command")
+
+    sub.add_parser("demo", help="run the full fixed demo (default)")
+
+    add_p = sub.add_parser("addition", help="run the unary addition TM")
+    add_p.add_argument("input", help="e.g. 111+11")
+    add_p.add_argument("--animate", action="store_true", help="colored step animation")
+    add_p.add_argument("--delay", type=float, default=0.4)
+
+    pal_p = sub.add_parser("palindrome", help="run the palindrome checker TM")
+    pal_p.add_argument("input", help="e.g. abcba")
+    pal_p.add_argument("--animate", action="store_true")
+    pal_p.add_argument("--delay", type=float, default=0.4)
+
+    args = parser.parse_args()
+
+    if args.command is None or args.command == "demo":
+        demo()
+    elif args.command == "addition":
+        run_machine("addition", args.input, None, args.animate, args.delay)
+    elif args.command == "palindrome":
+        run_machine("palindrome", args.input, list(args.input), args.animate, args.delay)
+
+
 if __name__ == "__main__":
-    demo()
+    main()
