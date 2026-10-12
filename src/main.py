@@ -54,6 +54,8 @@ def main():
     pal_p.add_argument("--animate", action="store_true")
     pal_p.add_argument("--delay", type=float, default=0.4)
 
+    sub.add_parser("halting", help="show the halting problem contradiction")
+
     args = parser.parse_args()
 
     if args.command is None or args.command == "demo":
@@ -62,6 +64,8 @@ def main():
         run_machine("addition", args.input, None, args.animate, args.delay)
     elif args.command == "palindrome":
         run_machine("palindrome", args.input, list(args.input), args.animate, args.delay)
+    elif args.command == "halting":
+        show_contradiction()
 
 
 if __name__ == "__main__":
