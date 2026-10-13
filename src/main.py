@@ -18,12 +18,25 @@ def build_machine(kind, alphabet):
     raise ValueError(f"unknown machine: {kind}")
 
 
-def run_machine(kind, input_string, alphabet, animate, delay):
+def run_machine(kind, input_string, alphabet, animate, delay, plot=None):
     transitions, start, accept, reject = build_machine(kind, alphabet)
     tm = TuringMachine(transitions, start, accept, reject)
-    result, tape, steps = tm.run(input_string, animate=animate, delay=delay)
+
+    record = plot is not None
+    out = tm.run(input_string, animate=animate, delay=delay, record_history=record)
+
+    if record:
+        result, tape, steps, history = out
+    else:
+        result, tape, steps = out
+
     if not animate:
         print(f"{kind} on '{input_string}' -> {result} (tape: '{tape}', {steps} steps)")
+
+    if plot:
+        from visualize import plot_history
+        path = plot_history(history, f"{kind}: {input_string} -> {result}", plot)
+        print(f"saved plot to {path}")
 
 
 def demo():
@@ -47,11 +60,13 @@ def main():
     add_p = sub.add_parser("addition", help="run the unary addition TM")
     add_p.add_argument("input", help="e.g. 111+11")
     add_p.add_argument("--animate", action="store_true", help="colored step animation")
+    add_p.add_argument("--plot", metavar="FILE.png", help="save a matplotlib tape plot")
     add_p.add_argument("--delay", type=float, default=0.4)
 
     pal_p = sub.add_parser("palindrome", help="run the palindrome checker TM")
     pal_p.add_argument("input", help="e.g. abcba")
     pal_p.add_argument("--animate", action="store_true")
+    pal_p.add_argument("--plot", metavar="FILE.png")
     pal_p.add_argument("--delay", type=float, default=0.4)
 
     sub.add_parser("halting", help="show the halting problem contradiction")
@@ -61,9 +76,10 @@ def main():
     if args.command is None or args.command == "demo":
         demo()
     elif args.command == "addition":
-        run_machine("addition", args.input, None, args.animate, args.delay)
+        run_machine("addition", args.input, None, args.animate, args.delay, args.plot)
     elif args.command == "palindrome":
-        run_machine("palindrome", args.input, list(args.input), args.animate, args.delay)
+        run_machine("palindrome", args.input, list(args.input), args.animate,
+                    args.delay, args.plot)
     elif args.command == "halting":
         show_contradiction()
 
