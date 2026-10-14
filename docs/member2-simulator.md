@@ -42,7 +42,23 @@ TM 2 (Palindrome): abcda
 
 Matches both the project spec and Member 1's hand traces exactly.
 
-## 5. Tests
+## 5. CLI, color, and matplotlib (polish pass)
+
+After the initial version, the display was upgraded as a team pass, since the
+plain-text output was too minimal on its own:
+
+- **Color** (added to the engine): `tape.render_color()` highlights the head cell
+  in yellow using ANSI escape codes, and the final result prints green/red. Only
+  active in `--animate` mode; the original plain `render()` path is unchanged.
+- **CLI** (added on top of the engine): `main.py` uses `argparse` with subcommands
+  — `addition <input>`, `palindrome <input>`, `halting`, or no argument for the
+  original fixed demo — each with `--animate` and `--plot FILE.png` flags.
+- **Matplotlib** (`visualize.py`): draws a grid (rows = steps, columns = tape
+  cells, head cell highlighted) from a recorded run history, satisfying the
+  "Matplotlib or terminal animation" tooling option with an actual static figure.
+  Only tracks history when `--plot` is used, so normal runs have no extra overhead.
+
+## 6. Tests
 
 `tests/test_addition.py` and `tests/test_palindrome.py` cover the sample cases
 and basic edge cases. All pass.
