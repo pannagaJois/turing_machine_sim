@@ -11,7 +11,11 @@ cd src
 python3 main.py                              # full fixed demo
 python3 main.py addition 111+11               # run a specific input
 python3 main.py palindrome abcba --animate     # colored step-by-step animation
+python3 main.py addition 111+11 --plot out.png  # save a matplotlib tape-history plot
+python3 main.py halting                         # just the halting contradiction
 ```
+
+Needs `matplotlib` for `--plot` (`pip install matplotlib --break-system-packages`).
 
 ## Team
 
