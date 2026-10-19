@@ -6,6 +6,19 @@ REJECT = "reject"
 
 
 def build_palindrome_tm(alphabet):
+    """
+    Build the palindrome TM for a given alphabet of single characters.
+
+    Each symbol c is marked as "already matched" by its uppercase form, so
+    every symbol must be a lowercase letter (a-z). Anything else (digits,
+    spaces, uppercase letters, the blank '_') has no distinct marker and
+    would silently give wrong answers, so it is rejected up front.
+    """
+    alphabet = list(dict.fromkeys(alphabet))  # de-duplicate, keep order
+    for c in alphabet:
+        if len(c) != 1 or not ("a" <= c <= "z"):
+            raise ValueError(
+                f"palindrome alphabet must be lowercase letters a-z, got {c!r}")
     marker = {c: c.upper() for c in alphabet}
     transitions = {}
 
