@@ -48,7 +48,8 @@ the rightmost not-yet-checked symbol, and compare. If they match, mark both as c
 If the sweep finds nothing left to check, accept.
 
 **Formal machine (generalizes to any alphabet of single-character symbols):**
-- Σ = {a, b, c, d} for this project
+- Σ = {a, b, c, d} for this project (any lowercase letters a-z work; digits,
+  spaces and uppercase letters are not allowed since they have no distinct marker)
 - Γ = {a, b, c, d, A, B, C, D, _} — uppercase = "already matched" marker
 - Q = {find_left, seekend_a..d, checkend_a..d, goback, accept, reject}
 - q0 = find_left
@@ -81,3 +82,17 @@ If the sweep finds nothing left to check, accept.
 | goback | _ | _ | R | find_left |
 
 This generic table is what `tables/palindrome_table.py` generates in code.
+
+## 4. Notes on the scanned handwritten designs
+
+`docs/handwritten/` holds the original paper designs. They differ from the code in small ways:
+
+- **Addition:** the handwritten example is 4 + 3 = 7 (the code and the hand trace
+  use the brief's 3 + 2 = 5). The final transition is written `(q2, 1) -> (q_f, _, N)`
+  with a "no move" `N`; the formal definition only allows `{L, R}`, so the
+  implementation moves `R` instead. The head position after halting does not
+  affect the result on the tape.
+- **Palindrome:** the handwritten machine is a *marker-style* design for
+  `w c w^R` over `{a, b}` (a centre marker `c`). The implemented machine
+  (described in section 3) checks ordinary palindromes over `{a, b, c, d}` by
+  marking matched pairs in uppercase, so it needs no centre marker.

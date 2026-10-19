@@ -46,7 +46,8 @@ tm.run("101", max_steps=1000) -> ("TIMEOUT", ..., 1000)
 A few tricky cases were added for the other two machines: malformed addition input
 with no `+`, `0 + 0`, two different single characters, two identical single
 characters, and a longer even-length palindrome. All pass — see
-`tests/test_halting_demo.py` and `tests/test_edge_cases.py`.
+`tests/test_halting_demo.py` and `tests/test_edge_cases.py`. `test_edge_cases.py`
+also holds regression tests for the plot/history fix (head beyond the tape end).
 
 ## 5. Why this connects to Member 4's report
 
