@@ -2,24 +2,33 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+BLANK = "_"
+
 
 def plot_history(history, title, out_path):
     """
-    history: list of (tape_string, head_position, state) snapshots.
-    Draws a grid: rows = steps, columns = tape cells, head cell highlighted.
+    history: list of (cells, head_position, state) snapshots, where cells is a
+    dict {position: symbol} (as recorded by TuringMachine.run).
+    Draws a grid: rows = steps, columns = tape positions, head cell highlighted.
+    The column range covers every cell written AND every head position, so the
+    head is always visible (even when it sits on a blank beyond the tape).
     """
-    tapes = [h[0] for h in history]
-    width = max(len(t) for t in tapes) if tapes else 1
+    positions = []
+    for cells, head, _ in history:
+        positions.extend(cells.keys())
+        positions.append(head)
+    lo, hi = min(positions), max(positions)
+    width = hi - lo + 1
     height = len(history)
 
     fig, ax = plt.subplots(figsize=(max(4, width * 0.6), max(2, height * 0.4)))
 
-    for row, (tape_str, head, state) in enumerate(history):
+    for row, (cells, head, state) in enumerate(history):
         y = height - row - 1
         for col in range(width):
-            symbol = tape_str[col] if col < len(tape_str) else "_"
-            is_head = (col == head)
-            color = "#ffd54f" if is_head else "#eeeeee"
+            pos = lo + col
+            symbol = cells.get(pos, BLANK)
+            color = "#ffd54f" if pos == head else "#eeeeee"
             ax.add_patch(plt.Rectangle((col, y), 1, 1, facecolor=color,
                                         edgecolor="#999999"))
             ax.text(col + 0.5, y + 0.5, symbol, ha="center", va="center",

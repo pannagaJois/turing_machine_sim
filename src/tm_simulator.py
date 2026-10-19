@@ -20,7 +20,7 @@ class TuringMachine:
         tape = Tape(input_string)
         state = self.start_state
         steps = 0
-        history = [(tape.to_string(), tape.head, state)] if record_history else None
+        history = [(dict(tape.cells), tape.head, state)] if record_history else None
 
         while state not in self.accept_states and state not in self.reject_states:
             if steps >= max_steps:
@@ -50,13 +50,16 @@ class TuringMachine:
             steps += 1
 
             if record_history:
-                history.append((tape.to_string(), tape.head, state))
+                history.append((dict(tape.cells), tape.head, state))
 
         result = "ACCEPT" if state in self.accept_states else "REJECT"
         return self._finish(result, tape, steps, history, animate)
 
     def _finish(self, result, tape, steps, history, animate):
         if animate:
+            # draw the final tape so the finished result is actually visible
+            print(CLEAR, end="")
+            print(tape.render_color())
             color = GREEN if result == "ACCEPT" else RED
             print(f"{color}{result}{RESET} after {steps} steps")
         if history is not None:

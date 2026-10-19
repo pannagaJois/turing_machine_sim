@@ -18,20 +18,60 @@ def build_machine(kind, alphabet):
     raise ValueError(f"unknown machine: {kind}")
 
 
-def run_machine(kind, input_string, alphabet, animate, delay, plot=None):
+def tape_snapshot(cells, head):
+    """One-line tape picture with the head cell in [brackets]."""
+    positions = list(cells) + [head]
+    lo, hi = min(positions), max(positions)
+    out = []
+    for i in range(lo, hi + 1):
+        sym = cells.get(i, "_")
+        out.append(f"[{sym}]" if i == head else sym)
+    return "".join(out)
+
+
+def print_trace(history):
+    """Compact step-by-step trace, one line per step."""
+    print("  Step-by-step:")
+    for n, (cells, head, state) in enumerate(history):
+        print(f"    {n:>3}  {state:<12} {tape_snapshot(cells, head)}")
+
+
+def first_mismatch(word):
+    """1-based positions (i, n+1-i) of the first mismatching pair, or None."""
+    n = len(word)
+    for i in range(n // 2):
+        if word[i] != word[n - 1 - i]:
+            return i + 1, n - i, word[i], word[n - 1 - i]
+    return None
+
+
+def run_machine(kind, input_string, alphabet, animate, delay, plot=None,
+                trace=False):
     transitions, start, accept, reject = build_machine(kind, alphabet)
     tm = TuringMachine(transitions, start, accept, reject)
 
-    record = plot is not None
+    record = plot is not None or trace
     out = tm.run(input_string, animate=animate, delay=delay, record_history=record)
 
     if record:
         result, tape, steps, history = out
     else:
         result, tape, steps = out
+        history = None
 
     if not animate:
         print(f"{kind} on '{input_string}' -> {result} (tape: '{tape}', {steps} steps)")
+
+    if kind == "addition" and result == "ACCEPT":
+        print(f"  Result: {tape} (= {len(tape)} in unary)")
+    if kind == "palindrome" and result == "REJECT":
+        mm = first_mismatch(input_string)
+        if mm:
+            i, j, a, b = mm
+            print(f"  Mismatch detected at positions {i} and {j}: {a} vs {b}")
+
+    if trace:
+        print_trace(history)
 
     if plot:
         from visualize import plot_history
@@ -41,11 +81,13 @@ def run_machine(kind, input_string, alphabet, animate, delay, plot=None):
 
 def demo():
     print("TM 1 (Addition): 111+11")
-    run_machine("addition", "111+11", None, animate=False, delay=0.4)
+    run_machine("addition", "111+11", None, animate=False, delay=0.4, trace=True)
+    print()
 
     for word in ["abcba", "abcda"]:
         print(f"TM 2 (Palindrome): {word}")
         run_machine("palindrome", word, list(word), animate=False, delay=0.4)
+        print()
 
     print("--- Halting Problem ---")
     show_contradiction()
@@ -60,12 +102,14 @@ def main():
     add_p = sub.add_parser("addition", help="run the unary addition TM")
     add_p.add_argument("input", help="e.g. 111+11")
     add_p.add_argument("--animate", action="store_true", help="colored step animation")
+    add_p.add_argument("--trace", action="store_true", help="print every step")
     add_p.add_argument("--plot", metavar="FILE.png", help="save a matplotlib tape plot")
     add_p.add_argument("--delay", type=float, default=0.4)
 
     pal_p = sub.add_parser("palindrome", help="run the palindrome checker TM")
-    pal_p.add_argument("input", help="e.g. abcba")
+    pal_p.add_argument("input", help="lowercase letters only, e.g. abcba")
     pal_p.add_argument("--animate", action="store_true")
+    pal_p.add_argument("--trace", action="store_true", help="print every step")
     pal_p.add_argument("--plot", metavar="FILE.png")
     pal_p.add_argument("--delay", type=float, default=0.4)
 
@@ -73,15 +117,19 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command is None or args.command == "demo":
-        demo()
-    elif args.command == "addition":
-        run_machine("addition", args.input, None, args.animate, args.delay, args.plot)
-    elif args.command == "palindrome":
-        run_machine("palindrome", args.input, list(args.input), args.animate,
-                    args.delay, args.plot)
-    elif args.command == "halting":
-        show_contradiction()
+    try:
+        if args.command is None or args.command == "demo":
+            demo()
+        elif args.command == "addition":
+            run_machine("addition", args.input, None, args.animate, args.delay,
+                        args.plot, args.trace)
+        elif args.command == "palindrome":
+            run_machine("palindrome", args.input, list(args.input), args.animate,
+                        args.delay, args.plot, args.trace)
+        elif args.command == "halting":
+            show_contradiction()
+    except ValueError as e:
+        parser.error(str(e))
 
 
 if __name__ == "__main__":
