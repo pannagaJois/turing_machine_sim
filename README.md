@@ -24,7 +24,7 @@ Halting Problem connected to AI safety.
 - `matplotlib`, only if you want to use `--plot` (not needed for anything else)
 
 ```
-pip install matplotlib --break-system-packages
+pip install matplotlib
 ```
 
 ## Running it
@@ -38,12 +38,15 @@ python3 main.py                                  # full fixed demo (both machine
 python3 main.py addition 111+11                  # run the addition TM on a specific input
 python3 main.py palindrome abcba                  # run the palindrome TM on a specific input
 python3 main.py palindrome abcba --animate         # colored, step-by-step terminal animation
+python3 main.py addition 111+11 --trace            # print every step as text (state + tape)
 python3 main.py addition 111+11 --plot out.png     # save a matplotlib tape-history plot
 python3 main.py halting                            # just the halting-problem contradiction
 ```
 
-`--plot` works with both `addition` and `palindrome`, and accepts any input string —
-not just the two sample ones.
+`--plot`, `--trace` and `--animate` work with both machines. The addition machine
+accepts any input string (malformed ones are rejected). The palindrome machine
+accepts **lowercase letters a-z only** (digits, spaces and uppercase have no
+distinct "matched" marker, so they are refused with an error).
 
 ## Running the tests
 
@@ -56,8 +59,9 @@ python3 test_edge_cases.py
 ```
 
 Covers the two official sample inputs, edge cases (empty string, single character,
-malformed input), and confirms the engine correctly times out on a non-halting
-machine instead of hanging.
+malformed input), exhaustive checks (all sums 0+0..7+7, all palindrome strings up
+to length 7), the plot/history regression, and confirms the engine correctly times
+out on a non-halting machine instead of hanging.
 
 ## Project structure
 
