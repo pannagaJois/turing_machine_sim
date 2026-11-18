@@ -8,7 +8,7 @@ Halting Problem connected to AI safety.
 
 - **A generic TM engine** (`src/tm_simulator.py`, `src/tape.py`) that runs *any*
   machine defined as a transition table — nothing addition- or palindrome-specific
-  is hardcoded into it.
+  is `hardcoded` into it.
 - **Two working machines**: unary addition (`111+11 -> 11111`) and a palindrome
   checker, both defined in `tables/`.
 - **A Halting Problem demonstration** (`src/halting_demo.py`): the classic
@@ -71,7 +71,7 @@ docs/           formal TM definition, machine designs, hand traces, LLM safety r
 tables/         transition tables: addition, palindrome, and a looping (non-halting) TM
 src/            tape, engine, CLI, halting demo, matplotlib visualization
 tests/          correctness tests for all machines, including edge cases
-slides/         presentation slides and outline
+slides/         presentation slides
 sample_output/  example matplotlib plots
 ```
 

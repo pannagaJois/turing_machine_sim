@@ -41,19 +41,16 @@ addition on '111+11' -> ACCEPT (tape: '11111', 8 steps)
       8  qaccept      11111_[_]
 
 TM 2 (Palindrome): abcba
-palindrome on 'abcba' -> ACCEPT (tape: 'ABCBA', 27 steps)
+palindrome on 'abcba' -> ACCEPT (tape: 'ABCBA', 21 steps)
 
 TM 2 (Palindrome): abcda
-palindrome on 'abcda' -> REJECT (tape: 'ABcdA', 18 steps)
+palindrome on 'abcda' -> REJECT (tape: 'ABcdA', 16 steps)
   Mismatch detected at positions 2 and 4: b vs d
 ```
 
 The accept/reject results and the 8-step addition trace match Member 1's hand
-traces. (The project brief's sample prints "positions 1 and 5: a vs d", but in
-`abcda` positions 1 and 5 are both `a`; the real mismatch is `b` vs `d` at
-positions 2 and 4, which is what the program reports.) The mismatch line is
-computed by the CLI from the input string; the TM itself only answers
-ACCEPT/REJECT.
+traces. The mismatch line is computed by the CLI from the input string; 
+the TM itself only answers ACCEPT/REJECT.
 
 ## 5. CLI, color, and matplotlib (polish pass)
 
@@ -84,6 +81,5 @@ basic edge cases, plus exhaustive checks (every sum 0+0 to 7+7; every string ove
 
 Palindrome alphabets are restricted to lowercase letters a-z, because "already
 matched" is marked with the uppercase form. Digits, spaces, uppercase letters or
-`_` have no distinct marker and would give wrong answers (for example `123` used
-to be wrongly accepted), so `build_palindrome_tm` raises `ValueError` and the
-CLI reports a clean usage error.
+`_` have no distinct marker and would give wrong answers , so `build_palindrome_tm`
+raises `ValueError` and the CLI reports a clean usage error.

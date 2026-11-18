@@ -62,7 +62,7 @@ If the sweep finds nothing left to check, accept.
   or blank), then step back onto the last unmarked symbol, go to **checkend_c**.
 - **checkend_c** — compare that symbol to `c`. Match: mark it, go to **goback**.
   Same marker already (middle reached): accept. Different symbol: reject.
-- **goback** — sweep left back to the start, then restart at **find_left**.
+- **goback** — sweep left across unmarked symbols until reading an already-marked uppercase symbol, then move right and restart at **find_left**.
 
 **Transition table (worked out for alphabet {a, b, c, d}):**
 
@@ -78,8 +78,8 @@ If the sweep finds nothing left to check, accept.
 | checkend_c | C | C | R | accept |
 | checkend_c | other lowercase | unchanged | R | reject |
 | checkend_c | other uppercase | unchanged | R | accept |
-| goback | any symbol | unchanged | L | goback |
-| goback | _ | _ | R | find_left |
+| goback | lowercase | unchanged | L | goback |
+| goback | uppercase | unchanged | R | find_left |
 
 This generic table is what `tables/palindrome_table.py` generates in code.
 
