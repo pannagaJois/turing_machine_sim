@@ -44,9 +44,8 @@ def build_palindrome_tm(alphabet):
                 transitions[(f"checkend_{c}", marker[d])] = (ACCEPT, marker[d], "R")
 
         transitions[("goback", c)] = ("goback", c, "L")
-        transitions[("goback", C)] = ("goback", C, "L")
+        transitions[("goback", C)] = (START, C, "R")
 
     transitions[(START, BLANK)] = (ACCEPT, BLANK, "R")
-    transitions[("goback", BLANK)] = (START, BLANK, "R")
 
     return transitions, START, {ACCEPT}, {REJECT}
